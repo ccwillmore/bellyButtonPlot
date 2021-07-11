@@ -92,14 +92,16 @@ function buildCharts(sample) {
       
     // // 9. Create the layout for the bar chart. 
     var barLayout = {
-     title:  'Top 10 Bacteria Cultures Found',
+     title:  '<b>Top 10 Bacteria Cultures Found</b>',
   
     };
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot("bar", barData, barLayout);
-    // console.log(sampleValues);
+
+    // Get the largest sample number to scale the bubble plot colors
+
     otuArray = Object.values(otuIDs).sort((a,b) => b-a);
-    console.log(otuArray[0]);
+
     // 1. Create the trace for the bubble chart.
     var bubbleData = [{
       x:  otuIDs,
@@ -117,12 +119,40 @@ function buildCharts(sample) {
 
     // 2. Create the layout for the bubble chart.
     var bubbleLayout = {
-      title:  "Bacteria Cultures per Sample",
+      title:  "<b>Bacteria Cultures per Sample</b>",
       xaxis:  {title:  "OTU ID"}
     };
 
     // 3. Use Plotly to plot the data with the layout.
     Plotly.newPlot("bubble",bubbleData,bubbleLayout); 
 
+    // 3. Create a variable that holds the washing frequency.
+     let subject = sampleData.metadata.filter(ObjectNumber => ObjectNumber.id == sample);
+     washFreq = subject[0].wfreq;
+    // 4. Create the trace for the gauge chart.
+    var gaugeData = [{
+      value:  washFreq,
+      title:  {text:  "<b>Belly Button Wash Frequency</b> <br> scrubs per week"},
+      type:  'indicator',
+      mode:  "gauge+number",
+      gauge:  
+      {
+        axis:  {range:  [null,10]},
+        bar:  {color:  'black'},
+        steps:  [
+          {range:  [0,2], color:"red"},
+          {range:  [2,4], color:"orange"},
+          {range:  [4,6], color:"yellow"},
+          {range:  [6,8], color:"lightgreen"},
+          {range:  [8,10], color:"green"}
+        ]
+      }
+      }];
+    // 5. Create the layout for the gauge chart.
+    var gaugeLayout = { width: 500, height: 400, margin: { t: 0, b: 0 } };
+
+
+    // 6. Use Plotly to plot the gauge data and layout.
+    Plotly.newPlot('gauge',gaugeData, gaugeLayout);
   });
 };
