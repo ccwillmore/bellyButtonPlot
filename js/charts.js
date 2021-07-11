@@ -62,7 +62,6 @@ function buildCharts(sample) {
     // 4. Create a variable that filters the samples for the object with the desired sample number.
     var sampleNumber = sampleData.samples.filter(sampleObject => sampleObject.id == sample);
     let result = sampleNumber[0];
-    console.log(result);
     //  5. Create a variable that holds the first sample in the array.
     var sampleID = result.id;
 
@@ -73,7 +72,6 @@ function buildCharts(sample) {
     result.otu_ids.forEach(element => otuIDs.push(element));
     result.otu_labels.forEach(label => otuLabels.push(label));
     result.sample_values.forEach(value => sampleValues.push(value));
-    console.log(otuIDs);
     
 
     // 7. Create the yticks for the bar chart.
@@ -83,7 +81,6 @@ function buildCharts(sample) {
     let yticks = otuIDs.slice(0,10).map(output => 'otu_id:  ' + output).reverse();
     let xvalues = sampleValues.slice(0,10).reverse();
     let hover = otuLabels.slice(0,10).reverse();
-    console.log(hover);
     // // 8. Create the trace for the bar chart. 
     var barData = [{
       x:  xvalues,
@@ -100,5 +97,32 @@ function buildCharts(sample) {
     };
     // 10. Use Plotly to plot the data with the layout. 
     Plotly.newPlot("bar", barData, barLayout);
+    // console.log(sampleValues);
+    otuArray = Object.values(otuIDs).sort((a,b) => b-a);
+    console.log(otuArray[0]);
+    // 1. Create the trace for the bubble chart.
+    var bubbleData = [{
+      x:  otuIDs,
+      y:  sampleValues,
+      text:  otuLabels,
+      mode:  "markers",
+      marker:  {size:  sampleValues, 
+                color:  otuIDs,
+                colorscale:  "Earth",
+                cmin:  0,
+                cmax:  otuArray[0],
+                line:  {color:  'black'}
+              }
+    }];
+
+    // 2. Create the layout for the bubble chart.
+    var bubbleLayout = {
+      title:  "Bacteria Cultures per Sample",
+      xaxis:  {title:  "OTU ID"}
+    };
+
+    // 3. Use Plotly to plot the data with the layout.
+    Plotly.newPlot("bubble",bubbleData,bubbleLayout); 
+
   });
 };
